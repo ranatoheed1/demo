@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trading Bot</title>
+    <!-- Link to external CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
     <style>
@@ -66,38 +67,48 @@ h2 {
 <body>
     <div class="container">
         <h1>Trading Bot</h1>
+        <p>Enter trade details to get predicted action (Buy, Sell, Hold)</p>
+        
+        <!-- Trading form to take inputs -->
         <form id="predictForm">
             <label for="price">Price:</label>
-            <input type="text" id="price" name="price" required>
+            <input type="text" id="price" name="price" placeholder="Enter price" required>
 
             <label for="quantity">Quantity:</label>
-            <input type="text" id="quantity" name="quantity" required>
+            <input type="text" id="quantity" name="quantity" placeholder="Enter quantity" required>
 
             <label for="total">Total:</label>
-            <input type="text" id="total" name="total" required>
+            <input type="text" id="total" name="total" placeholder="Enter total" required>
 
             <button type="submit">Get Action</button>
         </form>
 
+        <!-- This section will show the predicted action -->
         <h2 id="predictionResult"></h2>
     </div>
 
+    <!-- jQuery to handle the form submission and communicate with Flask backend -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            // When the form is submitted, prevent default behavior and use AJAX to send the data
             $("#predictForm").on("submit", function(event) {
-                event.preventDefault();
+                event.preventDefault();  // Prevent page refresh
                 
+                // Get the input values from the form fields
                 var formData = {
                     price: $("#price").val(),
                     quantity: $("#quantity").val(),
                     total: $("#total").val()
                 };
 
+                // Send the data to Flask using POST request
                 $.post("/predict", formData, function(data) {
                     if (data.action) {
-                        $("#predictionResult").text("Action: " + data.action);
+                        // If the action is returned from Flask, display it in the result area
+                        $("#predictionResult").text("Predicted Action: " + data.action);
                     } else {
+                        // If there was an error in the prediction, show the error message
                         $("#predictionResult").text("Error: " + data.error);
                     }
                 });
